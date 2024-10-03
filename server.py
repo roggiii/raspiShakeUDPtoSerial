@@ -4,62 +4,35 @@ import socket as s
 import numpy as np 
 import serial
 import time
+import sys
 
 import logging
 from logging.handlers import RotatingFileHandler
 
-# Version 16
+from helper import runtimesystem
+
+
+# akutuelle todo's:
+# - Werte die von config file gelesen werden müssen noch in zahlen/booleans umgewandelt werden
+# - logging modul für alle Klassen erreichbar machen und nicht nur in Hauptprogramm
 
 #ToDo's
 # - figure out why raspi shake sends nothing to localhost ip
 # - write a funktion to calculate the rasam value and put
 #   all the neccesary variables in a class
 
+# pi only sends out the udp data to one of the physikal connection points ...
+# not possible to pipe data to localhost 127.0.0.1 for some reason
+
 # code can run on windows/linux for testing purposes
-# choose which OS this code needs to run on with setting ACTIVE_OS
 # configurable for testing purposes: for example to disable serial communication to
 # avoid errors while on an testing rig
-WINDOWS = 0
-LINUX = 1
-ACTIVE_OS = WINDOWS
 
 MITTELUNGSZEIT = 2
 
-class runtimesystem:
-    name = ""
-    serial_baudrate = 0
-    serial_port = ""
-    udp_ip_adress = ""
-    udp_port_no = 0
-    serial_coms_enabled = False
-    debug_file_path = ""
-    file_logger_debug_level = ""
-    terminal_logger_debug_level = ""
+system_info = runtimesystem()
+system_info.readFromConfigFile()
 
-SystemList = [runtimesystem(), runtimesystem()]
-
-# config for debug system on windows
-SystemList[WINDOWS].serial_baudrate = 9600
-SystemList[WINDOWS].serial_port = "COM0"
-SystemList[WINDOWS].udp_ip_adress = "127.0.0.1"
-SystemList[WINDOWS].udp_port_no = 8888
-SystemList[WINDOWS].serial_coms_enabled = False
-SystemList[WINDOWS].debug_file_path = "debug_file.txt"
-SystemList[WINDOWS].file_logger_debug_level = "DEBUG"
-SystemList[WINDOWS].terminal_logger_debug_level = "DEBUG"
-
-# config for linux system
-
-# pi only sends out the udp data to one of the physikal connection points ...
-# not possible to pipe data to localhost 127.0.0.1 for some reason
-SystemList[LINUX].serial_baudrate = 115200
-SystemList[LINUX].serial_port = "/dev/my_serial"
-SystemList[LINUX].udp_ip_adress = "172.17.0.2" # find it out with linux command "hostname -I"
-SystemList[LINUX].udp_port_no = 8888
-SystemList[LINUX].serial_coms_enabled = True
-SystemList[LINUX].debug_file_path = "/home/myshake/script/debug_log.txt"
-SystemList[LINUX].file_logger_debug_level = "DEBUG"
-SystemList[LINUX].terminal_logger_debug_level = "CRITICAL"
 
 # logger configuration
 # saves file "debug_log.txt" in the same folder as the script
@@ -74,7 +47,7 @@ logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
 # Create a file handler to write logs to a file
-file_handler = RotatingFileHandler(SystemList[ACTIVE_OS].debug_file_path, maxBytes=5*1024*1024, backupCount=0)
+file_handler = RotatingFileHandler("debug_file.txt", maxBytes=5*1024*1024, backupCount=0)
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 
@@ -102,7 +75,7 @@ def print_HDF_output(timestamp,final_RSAM_value):
     message = 'HDF' + ';' + str(timestamp) + ';' + str(int(final_RSAM_value)) + '\n'
     logger.info(message)                        # in debug file Werte reinschreiben
 
-    if SystemList[ACTIVE_OS].serial_coms_enabled:
+    if system_info.serial_coms_enabled:
         try:
             serial_port.write(message.encode())
         except:
@@ -113,7 +86,7 @@ def print_EHZ_output(timestamp,final_RSAM_value):
     message = 'EHZ' + ';' + str(timestamp) + ';' + str(int(final_RSAM_value)) + '\n'
     logger.info(message)
 
-    if SystemList[ACTIVE_OS].serial_coms_enabled:
+    if system_info.serial_coms_enabled:
         try:
             serial_port.write(message.encode())
         except:
@@ -125,7 +98,7 @@ def print_EHZ_output(timestamp,final_RSAM_value):
 # will fail otherwise and script would be terminated with automatic start on boot
 def UDP_portUsable():
     try:
-       sock.bind((SystemList[ACTIVE_OS].udp_ip_adress, SystemList[ACTIVE_OS].udp_port_no))
+       sock.bind((system_info.udp_ip_adress, system_info.udp_port_no))
        return True
     except:
        return False
@@ -136,26 +109,26 @@ while UDP_portUsable() == False:
 
 
 # write function that prints all the active information on the screen for the user to see!!!!! better for debugging!!!!
-host_msg = SystemList[ACTIVE_OS].udp_ip_adress + " " + str(SystemList[ACTIVE_OS].udp_port_no)
+host_msg = system_info.udp_ip_adress + " " + str(system_info.udp_port_no)
 logger.info(host_msg)
 
 # checks if given serial port is availible
 def portIsUsable():
     try:
-       ser = serial.Serial(SystemList[ACTIVE_OS].serial_port, SystemList[ACTIVE_OS].serial_baudrate)
+       ser = serial.Serial(system_info.serial_port, system_info.serial_baudrate)
        return True
     except:
        return False
 
 # checks if serial communications should be enabled for given os
 # opens port for serial communication accordingly
-if SystemList[ACTIVE_OS].serial_coms_enabled:
+if system_info.serial_coms_enabled:
     logger.info("Trying to connec to serial port")
     while portIsUsable() == False:
         #print("Serial Port not availible, retrying ...")
         logger.warning("Serial Port not availible, retrying ...")
         time.sleep(1)
-    serial_port = serial.Serial(SystemList[ACTIVE_OS].serial_port, SystemList[ACTIVE_OS].serial_baudrate)
+    serial_port = serial.Serial(system_info.serial_port, system_info.serial_baudrate)
 
 
 stream = []         # array holding all the single values from the data stream from the rapberry pi in an array
@@ -173,6 +146,9 @@ timestamp_EHZ = 0
 timestamp_HDF = 0
 
 logger.warning("waiting for server to respond ...")
+
+#################################### FOR DEBUG
+sys.exit()
 
 while 1:             
     data, addr = sock.recvfrom(1024)                        # warte bis Daten vom UDP-Port bereitgestellt werden

@@ -1,0 +1,22 @@
+# config for debug system on windows
+SystemList[WINDOWS].serial_baudrate = 9600
+SystemList[WINDOWS].serial_port = "COM0"
+SystemList[WINDOWS].udp_ip_adress = "127.0.0.1"
+SystemList[WINDOWS].udp_port_no = 8888
+SystemList[WINDOWS].serial_coms_enabled = False
+SystemList[WINDOWS].debug_file_path = "debug_file.txt"
+SystemList[WINDOWS].file_logger_debug_level = "DEBUG"
+SystemList[WINDOWS].terminal_logger_debug_level = "DEBUG"
+
+# config for linux system
+
+# pi only sends out the udp data to one of the physikal connection points ...
+# not possible to pipe data to localhost 127.0.0.1 for some reason
+SystemList[LINUX].serial_baudrate = 115200
+SystemList[LINUX].serial_port = "/dev/my_serial"
+SystemList[LINUX].udp_ip_adress = "172.17.0.2" # find it out with linux command "hostname -I"
+SystemList[LINUX].udp_port_no = 8888
+SystemList[LINUX].serial_coms_enabled = True
+SystemList[LINUX].debug_file_path = "/home/myshake/script/debug_log.txt"
+SystemList[LINUX].file_logger_debug_level = "DEBUG"
+SystemList[LINUX].terminal_logger_debug_level = "CRITICAL"
