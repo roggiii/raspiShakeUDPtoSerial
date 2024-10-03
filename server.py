@@ -13,8 +13,8 @@ from helper import runtimesystem
 
 
 # akutuelle todo's:
-# - Werte die von config file gelesen werden müssen noch in zahlen/booleans umgewandelt werden
 # - logging modul für alle Klassen erreichbar machen und nicht nur in Hauptprogramm
+# - problem mit config.ini Datei: bei linux brauche ich wieder absoluten Ablagepfad....
 
 #ToDo's
 # - figure out why raspi shake sends nothing to localhost ip
@@ -32,7 +32,7 @@ MITTELUNGSZEIT = 2
 
 system_info = runtimesystem()
 system_info.readFromConfigFile()
-
+system_info.print_info()
 
 # logger configuration
 # saves file "debug_log.txt" in the same folder as the script
@@ -106,11 +106,6 @@ def UDP_portUsable():
 while UDP_portUsable() == False:
     logger.warning("Networkcard not initialised, waiting ...")
     time.sleep(5)
-
-
-# write function that prints all the active information on the screen for the user to see!!!!! better for debugging!!!!
-host_msg = system_info.udp_ip_adress + " " + str(system_info.udp_port_no)
-logger.info(host_msg)
 
 # checks if given serial port is availible
 def portIsUsable():
