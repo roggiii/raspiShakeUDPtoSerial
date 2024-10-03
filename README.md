@@ -4,3 +4,4 @@ Helpful when the shake needs to be operated in remote areas where no internet co
 
 ### useful links:
 - https://manual.raspberryshake.org/udp.html
+- https://community.raspberryshake.org/c/tech-support/34
