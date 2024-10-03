@@ -21,7 +21,7 @@ from logging.handlers import RotatingFileHandler
 # avoid errors while on an testing rig
 WINDOWS = 0
 LINUX = 1
-ACTIVE_OS = LINUX
+ACTIVE_OS = WINDOWS
 
 MITTELUNGSZEIT = 2
 
@@ -33,48 +33,62 @@ class runtimesystem:
     udp_port_no = 0
     serial_coms_enabled = False
     debug_file_path = ""
+    file_logger_debug_level = ""
+    terminal_logger_debug_level = ""
 
 SystemList = [runtimesystem(), runtimesystem()]
 
-if ACTIVE_OS == WINDOWS:
-    SystemList[WINDOWS].serial_baudrate = 9600
-    SystemList[WINDOWS].serial_port = "COM0"
-    SystemList[WINDOWS].udp_ip_adress = "127.0.0.1"
-    SystemList[WINDOWS].udp_port_no = 8888
-    SystemList[WINDOWS].serial_coms_enabled = False
-    SystemList[WINDOWS].debug_file_path = "debug_file.txt"
+# config for debug system on windows
+SystemList[WINDOWS].serial_baudrate = 9600
+SystemList[WINDOWS].serial_port = "COM0"
+SystemList[WINDOWS].udp_ip_adress = "127.0.0.1"
+SystemList[WINDOWS].udp_port_no = 8888
+SystemList[WINDOWS].serial_coms_enabled = False
+SystemList[WINDOWS].debug_file_path = "debug_file.txt"
+SystemList[WINDOWS].file_logger_debug_level = "DEBUG"
+SystemList[WINDOWS].terminal_logger_debug_level = "DEBUG"
 
+# config for linux system
 
-if ACTIVE_OS == LINUX:
-    # ip adress of the pi can change, need to get it from the
-    # txt file in the OS path
-    #hostipF = "/opt/settings/sys/ip.txt"
-    #file = open(hostipF, 'r')
-    #host = file.read().strip()
-    #file.close()
-
-    # pi only sends out the udp data to one of the physikal connection points ...
-    # not possible to pipe data to localhost 127.0.0.1 for some reason
-    SystemList[LINUX].serial_baudrate = 115200
-    SystemList[LINUX].serial_port = "/dev/my_serial"
-    SystemList[LINUX].udp_ip_adress = "172.17.0.2" # find it out with linux command "hostname -I"
-    SystemList[LINUX].udp_port_no = 8888
-    SystemList[LINUX].serial_coms_enabled = True
-    SystemList[LINUX].debug_file_path = "/home/myshake/script/debug_log.txt"
+# pi only sends out the udp data to one of the physikal connection points ...
+# not possible to pipe data to localhost 127.0.0.1 for some reason
+SystemList[LINUX].serial_baudrate = 115200
+SystemList[LINUX].serial_port = "/dev/my_serial"
+SystemList[LINUX].udp_ip_adress = "172.17.0.2" # find it out with linux command "hostname -I"
+SystemList[LINUX].udp_port_no = 8888
+SystemList[LINUX].serial_coms_enabled = True
+SystemList[LINUX].debug_file_path = "/home/myshake/script/debug_log.txt"
+SystemList[LINUX].file_logger_debug_level = "DEBUG"
+SystemList[LINUX].terminal_logger_debug_level = "CRITICAL"
 
 # logger configuration
 # saves file "debug_log.txt" in the same folder as the script
+# one handler is needed for printing to the terminal and the other for printing to the logfile
+# this avoids the need to have print()-functions and logger()-functions simultaneously
+# on linux all the output from the programm should be written to the log file, otherwise ssh-terminal will get clogged up when
+# this script is running in the background all the time and using the terminal window will be impossible
 logger = logging.getLogger("Auswerteskript")
 logger.setLevel(logging.DEBUG)
 
-handler = RotatingFileHandler(SystemList[ACTIVE_OS].debug_file_path, maxBytes=5*1024*1024, backupCount=0)
-
+# Create a formatter to define the log format
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+
+# Create a file handler to write logs to a file
+file_handler = RotatingFileHandler(SystemList[ACTIVE_OS].debug_file_path, maxBytes=5*1024*1024, backupCount=0)
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+# Create a stream handler to print logs to the console
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)  # You can set the desired log level for console output
+console_handler.setFormatter(formatter)
+
+# Add the handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
 
 # UDP-Connection
-print("trying to start upd-connection")
 logger.info("trying to start upd-connection")
 
 sock = s.socket(s.AF_INET, s.SOCK_DGRAM)
@@ -86,32 +100,24 @@ sock.setsockopt(s.SOL_SOCKET, s.SO_REUSEADDR, 1)
 # - Seriellen Port
 def print_HDF_output(timestamp,final_RSAM_value):
     message = 'HDF' + ';' + str(timestamp) + ';' + str(int(final_RSAM_value)) + '\n'
-
-    if ACTIVE_OS == WINDOWS:                    # nur auf Windows auf Terminal ausgeben, blockiert sonst Linux SSH Terminal komplett
-        print(message)
-
     logger.info(message)                        # in debug file Werte reinschreiben
 
     if SystemList[ACTIVE_OS].serial_coms_enabled:
         try:
             serial_port.write(message.encode())
         except:
-            logger.critical("Serial Port not availible")
+            logger.warning("Serial Port not availible")
 
 
 def print_EHZ_output(timestamp,final_RSAM_value):
     message = 'EHZ' + ';' + str(timestamp) + ';' + str(int(final_RSAM_value)) + '\n'
-
-    if ACTIVE_OS == WINDOWS:                    # nur auf Windows auf Terminal ausgeben, blockiert sonst Linux SSH Terminal komplett
-        print(message)
-
     logger.info(message)
 
     if SystemList[ACTIVE_OS].serial_coms_enabled:
         try:
             serial_port.write(message.encode())
         except:
-            logger.critical("Serial Port not availible")
+            logger.warning("Serial Port not availible")
 
 
 # checks if network port is ready
@@ -125,11 +131,12 @@ def UDP_portUsable():
        return False
     
 while UDP_portUsable() == False:
-    logger.critical("Network not yet ready, waiting ...")
+    logger.warning("Networkcard not initialised, waiting ...")
     time.sleep(5)
 
+
+# write function that prints all the active information on the screen for the user to see!!!!! better for debugging!!!!
 host_msg = SystemList[ACTIVE_OS].udp_ip_adress + " " + str(SystemList[ACTIVE_OS].udp_port_no)
-print(host_msg)
 logger.info(host_msg)
 
 # checks if given serial port is availible
@@ -146,7 +153,7 @@ if SystemList[ACTIVE_OS].serial_coms_enabled:
     logger.info("Trying to connec to serial port")
     while portIsUsable() == False:
         #print("Serial Port not availible, retrying ...")
-        logger.critical("Serial Port not availible, retrying ...")
+        logger.warning("Serial Port not availible, retrying ...")
         time.sleep(1)
     serial_port = serial.Serial(SystemList[ACTIVE_OS].serial_port, SystemList[ACTIVE_OS].serial_baudrate)
 
@@ -165,8 +172,7 @@ now_HDF = 0
 timestamp_EHZ = 0
 timestamp_HDF = 0
 
-print("server response in: DEBUGFILE")
-logger.info("waiting for server to respond ...")
+logger.warning("waiting for server to respond ...")
 
 while 1:             
     data, addr = sock.recvfrom(1024)                        # warte bis Daten vom UDP-Port bereitgestellt werden
