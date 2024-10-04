@@ -51,16 +51,16 @@ Description of the steps to take when to operate shake offline and analyse the d
 ## Setup serial port
 Serial port needs to be configured so that the COM-port-number wont change on reboot. This is to be done with a u-dev-rule
 1. find devices that report as usb-to-serial-adapters: `dmesg | grep tty`
-   -> take note of the name os your device, usually named something like **ttyUSBx** (x is a number)
+   - take note of the name os your device, usually named something like **ttyUSBx** (x is a number)
 2. list all the attribtes from the device: `udevadm info --name=/dev/ttyUSB0 --attribute-walk`
-   -> Every USB-device has attributes by which the operating system can differentiate between them
-   -> the goal ist to find an attribute that is unique to this device and map it permanently to a COM-port
-   -> these attributes work: `ATTRS{idProduct}=="0002"` `ATTRS{idVendor}=="1d6b"`
+   - Every USB-device has attributes by which the operating system can differentiate between them
+   - the goal ist to find an attribute that is unique to this device and map it permanently to a COM-port
+   - these attributes work: `ATTRS{idProduct}=="0002"` `ATTRS{idVendor}=="1d6b"`
 3. Create new rule file: `sudo nano /etc/udev/rules.d/99-usb-serial.rules` and put the choosen attributes as rules into it: `SUBSYSTEM=="tty", ATTRS{idVendor}=="1d6b", ATTRS{idProduct}=="0002", SYMLINK+="my_serial"`
-   -> now every usb-device with these attributes reports as com-port "my_serial"
+   - now every usb-device with these attributes reports as com-port "my_serial"
 4. Refrehs rules: `sudo udevadm trigger`
 5. Verify rule change: `ls -l /dev/my_serial`
-   -> shows what tty number the syslink went to
+   - shows what tty number the syslink went to
 6. Test rule change: `udevadm test -a -p  $(udevadm info -q path -n /dev/my_serial)`
 
 
