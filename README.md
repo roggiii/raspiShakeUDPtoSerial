@@ -7,9 +7,9 @@ Helpful when the shake needs to be operated in remote areas where no internet co
 - https://community.raspberryshake.org/c/tech-support/34
 
 # Files
-**server.py** main programm loop
-**client.py** provides dummy shake data to configurable UDP port for testing purposes
-**config.ino** config file for the serial and udp communication parameters
+- **server.py** main programm loop
+- **client.py** provides dummy shake data to configurable UDP port for testing purposes
+- **config.ino** config file for the serial and udp communication parameters
 
 # Setup
 Description of the steps to take when to operate shake offline and analyse the data locally.
