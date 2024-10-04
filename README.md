@@ -6,6 +6,11 @@ Helpful when the shake needs to be operated in remote areas where no internet co
 - https://manual.raspberryshake.org/udp.html
 - https://community.raspberryshake.org/c/tech-support/34
 
+# Files
+**server.py** main programm loop
+**client.py** provides dummy shake data to configurable UDP port for testing purposes
+**config.ino** config file for the serial and udp communication parameters
+
 # Setup
 Description of the steps to take when to operate shake offline and analyse the data locally.
 ## Packages
@@ -14,7 +19,7 @@ Description of the steps to take when to operate shake offline and analyse the d
 3. update:
    - `sudo apt-get --allow-releaseinfo-change update`
    - `sudo apt-get update && apt-get upgrade`
-4. install Packages:
+4. Install Packages:
    --timeout 100 is neccecary when there is a bad internet connection
    - `sudo apt install python3-pip`
    - `pip3 install --upgrade pip --timeout 100`
@@ -22,17 +27,16 @@ Description of the steps to take when to operate shake offline and analyse the d
    - `pip3 install numpy --timeout 100 --no-cache-dir`
    - `pip3 uninstall serial`
    - `pip3 install pyserial`
-  5. start script on reboot:
+  5. Start script on reboot:
      - edit cronjob with the following command:
        `EDITOR=nano crontab -e`
      - paste and save this line into cronfile:
        `@reboot /usr/bin/python3 /home/myshake/script/./server.py`
-  6. set file permissions:
-     - `mkdir ~/script`
+  6. Set file permissions:
      - `chmod +x ~/script/server.py`
 ## Datacast and static IP
-1. goto http://rs.local/
-2. set Datacast and static IP to: ??
+1. Goto http://rs.local/
+2. Set Datacast and static IP to: ??
 
 
 
