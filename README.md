@@ -6,6 +6,16 @@ Helpful when the shake needs to be operated in remote areas where no internet co
 - https://manual.raspberryshake.org/udp.html
 - https://community.raspberryshake.org/c/tech-support/34
 
+# Commands
+- watch script output: `tail -f ~/script/debug_log.txt`
+- list all processes containing "python": `ps -ef | grep python`
+- kill running script: `pkill -9 -f server.py`
+- start script: `~/script/./server.py &`
+- edit script: `nano ~/script/server.py`
+- @reboot cronjob testen ohne Pi neuzustarten:
+   `sudo rm /var/run/crond.reboot`
+   `sudo service cron restart`
+
 # Files
 - **server.py** main programm loop
 - **client.py** provides dummy shake data to configurable UDP port for testing purposes
