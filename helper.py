@@ -3,8 +3,11 @@ import configparser
 import os.path
 import sys
 
+from myLogger import logger
 
-CONFIG_FILENAME = 'config.ini'
+# when the script is executed automatically on boot, linux needs an absolute
+# path to the config file
+CONFIG_FILE_PATH = os.path.dirname(__file__)+'\config.ini'
 
 class runtimesystem:
     os_name = ""
@@ -13,13 +16,12 @@ class runtimesystem:
     udp_ip_adress = ""
     udp_port_no = 0
     serial_coms_enabled = False
-    debug_file_path = "test2"
     file_logger_debug_level = ""
     terminal_logger_debug_level = ""
 
     # creates new config file with default values
     def __create_config():
-        print("Configfile does not exist, creating file in working directory ...")
+        logger.info("Configfile does not exist, creating file in working directory ...")
 
         config = configparser.ConfigParser()
 
@@ -37,30 +39,29 @@ class runtimesystem:
             'port_numnber': 8888}
         
         config['Logging'] = {
-            'filepath': 'debug_file.txt',
             'file_logger_debug_level': 'info',
             'terminal_logger_debug_level': 'info'}
 
         # Write the configuration to a file
         try:
-            with open(CONFIG_FILENAME, 'w') as configfile:
+            with open(CONFIG_FILE_PATH, 'w') as configfile:
                 config.write(configfile)
         except:
-            print("Configfile could not be created!")
-            print('Linux needs absolute paths: -> "/home/myshake/script/debug_log.txt"')
-            print("If you run into trouble, copy the full filepath into the CONFIG_FILENAME variable in this script")
-            print("Terminating script ....")
+            logger.info("Configfile could not be created!")
+            logger.info('Linux needs absolute paths: -> "/home/myshake/script/debug_log.txt"')
+            logger.info("If you run into trouble, copy the full filepath into the CONFIG_FILENAME variable in this script")
+            logger.info("Terminating script ....")
             sys.exit()
 
-        print('Configfile "'+ CONFIG_FILENAME +'" has been created')
-        print("Script needs to be restarted bevore new settings are activated")
-        print("Terminating script ... goodbye!")
+        logger.info('Configfile "'+ CONFIG_FILE_PATH +'" has been created')
+        logger.info("Script needs to be restarted bevore new settings are activated")
+        logger.info("Terminating script ... goodbye!")
         sys.exit()
 
     # writes contents of the config file to object
     def __get_settings(self):
         config = configparser.ConfigParser()
-        config.read(CONFIG_FILENAME)
+        config.read(CONFIG_FILE_PATH)
 
         self.os_name = config.get('General','os_name')
         self.serial_baudrate = config.getint('Serial_Communication','baudrate')
@@ -70,41 +71,38 @@ class runtimesystem:
         self.udp_ip_adress = config.get('UDP_Communication', 'ip_adress')
         self.udp_port_no = config.getint('UDP_Communication', 'port_numnber')
 
-        self.debug_file_path = config.get('Logging', 'filepath')
         self.file_logger_debug_level = config.get('Logging', 'file_logger_debug_level')
         self.terminal_logger_debug_level = config.get('Logging', 'terminal_logger_debug_level')
 
-    # prints all the availible public variable data for the communication
+    # logger.infos all the availible public variable data for the communication
     def print_info(self):
-        print("------------ Settings ------------")
-        print("# Operatingsystem: "+self.os_name)
-        print("# Serial Communication:")
-        print("- Baudrate: "+str(self.serial_baudrate))
-        print("- Serialport: "+self.serial_port)
-        print("- enabled: "+str(self.serial_coms_enabled))
-        print("# UDP-Communication:")
-        print("- IP-Adress: "+self.udp_ip_adress)
-        print("- Portnumber: "+str(self.udp_port_no))
-        print("# Logging")
-        print("- file path: "+ self.debug_file_path)
-        print("- file logger level: "+ self.file_logger_debug_level)
-        print("- terminal logger level: "+ self.terminal_logger_debug_level)
-        print("------------------------------------")
+        logger.info("------------ Settings ------------")
+        logger.info("# Operatingsystem: "+self.os_name)
+        logger.info("# Serial Communication:")
+        logger.info("- Baudrate: "+str(self.serial_baudrate))
+        logger.info("- Serialport: "+self.serial_port)
+        logger.info("- enabled: "+str(self.serial_coms_enabled))
+        logger.info("# UDP-Communication:")
+        logger.info("- IP-Adress: "+self.udp_ip_adress)
+        logger.info("- Portnumber: "+str(self.udp_port_no))
+        logger.info("# Logging")
+        logger.info("- file logger level: "+ self.file_logger_debug_level)
+        logger.info("- terminal logger level: "+ self.terminal_logger_debug_level)
+        logger.info("------------------------------------")
 
     # checks if config file exists and runs subroutines to either create new config file or to populate object
     def readFromConfigFile(self):
-        if not os.path.isfile(CONFIG_FILENAME):
+        logger.info("looking for config.ini file in "+CONFIG_FILE_PATH)
+        if not os.path.isfile(CONFIG_FILE_PATH):
             runtimesystem.__create_config()
 
-        if os.path.isfile(CONFIG_FILENAME):
-            print("Configfile has been found, reading settings ...")
+        if os.path.isfile(CONFIG_FILE_PATH):
+            logger.info("Configfile has been found, reading settings ...")
             try:
                 runtimesystem.__get_settings(self)
             except:
-                print("Failed to read configfile, delete file and restart script!")
-                print("Terminating script ... goodbye!")
+                logger.info("Failed to read configfile, delete file and restart script!")
+                logger.info("Terminating script ... goodbye!")
                 sys.exit()
 
-
-
-                
+      
