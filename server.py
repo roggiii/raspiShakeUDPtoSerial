@@ -10,14 +10,11 @@ import sys
 from helper import runtimesystem
 from myLogger import logger
 
-# akutuelle todo's:
-# - logging modul für alle Klassen erreichbar machen und nicht nur in Hauptprogramm
-# - problem mit config.ini Datei: bei linux brauche ich wieder absoluten Ablagepfad....
-
 #ToDo's
 # - figure out why raspi shake sends nothing to localhost ip
 # - write a funktion to calculate the rasam value and put
-#   all the neccesary variables in a class
+# -  all the neccesary variables in a class
+# - serial port should retry to connect when disconnect happend
 
 # pi only sends out the udp data to one of the physikal connection points ...
 # not possible to pipe data to localhost 127.0.0.1 for some reason
@@ -94,7 +91,7 @@ def portIsUsable():
 # checks if serial communications should be enabled for given os
 # opens port for serial communication accordingly
 if system_info.serial_coms_enabled:
-    logger.info("Trying to connec to serial port")
+    logger.info("Trying to connect to serial port")
     while portIsUsable() == False:
         #print("Serial Port not availible, retrying ...")
         logger.warning("Serial Port not availible, retrying ...")
