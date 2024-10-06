@@ -67,6 +67,10 @@ Serial port needs to be configured so that the COM-port-number wont change on re
 ## Set offline mode
 Connect via ssh and enter the following command: `rsh-stand-alone ON` and confirm with `YES`
 
+## Configure Shake to write logs to usb-drive
+Follow instructions on [Raspberryshake.org](https://manual.raspberryshake.org/usbsds.html#usbsds)
+
+
 
 
 
