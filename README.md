@@ -49,7 +49,8 @@ Description of the steps to take when to operate shake offline and analyse the d
 2. Set Datacast and static IP to: ??
 
 ## Setup serial port
-Serial port needs to be configured so that the COM-port-number wont change on reboot. This is to be done with a u-dev-rule
+Serial port needs to be configured so that the COM-port-number wont change on reboot. This is to be done with a u-dev-rule. [https://unix.stackexchange.com/questions/66901/how-to-bind-usb-device-under-a-static-name](Source)
+
 1. find devices that report as usb-to-serial-adapters: `dmesg | grep tty`
    - take note of the name os your device, usually named something like **ttyUSBx** (x is a number)
 2. list all the attribtes from the device: `udevadm info --name=/dev/ttyUSB0 --attribute-walk`
@@ -62,6 +63,9 @@ Serial port needs to be configured so that the COM-port-number wont change on re
 5. Verify rule change: `ls -l /dev/my_serial`
    - shows what tty number the syslink went to
 6. Test rule change: `udevadm test -a -p  $(udevadm info -q path -n /dev/my_serial)`
+
+## Set offline mode
+Connect via ssh and enter the following command: `rsh-stand-alone ON` and confirm with `YES`
 
 
 
