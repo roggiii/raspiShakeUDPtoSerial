@@ -49,7 +49,7 @@ Description of the steps to take when to operate shake offline and analyse the d
 2. Set Datacast and static IP to: ??
 
 ## Setup serial port
-Serial port needs to be configured so that the COM-port-number wont change on reboot. This is to be done with a u-dev-rule. [https://unix.stackexchange.com/questions/66901/how-to-bind-usb-device-under-a-static-name](Source)
+Serial port needs to be configured so that the COM-port-number wont change on reboot. This is to be done with a u-dev-rule. [Source](https://unix.stackexchange.com/questions/66901/how-to-bind-usb-device-under-a-static-name)
 
 1. find devices that report as usb-to-serial-adapters: `dmesg | grep tty`
    - take note of the name os your device, usually named something like **ttyUSBx** (x is a number)
