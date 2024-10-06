@@ -2,13 +2,15 @@
 Takes the UDP datastream from the raspberry shake client and outputs it on a serial connection.
 Helpful when the shake needs to be operated in remote areas where no internet connection is availible but the data should be analysed for threats.
 
-### useful links:
+# Useful stuff:
+## Links:
 - https://manual.raspberryshake.org/udp.html
 - https://community.raspberryshake.org/c/tech-support/34
 
-# Establish remote connection
-To directly edit code [VS-Code](https://code.visualstudio.com/docs/remote/ssh) is a good choice.
-When wanting to copy/delete files from shake [WinSCP](https://winscp.net/eng/download.php) works.
+## Establish remote connection:
+It is possible to edit the code directly on the shake via [VS-Code](https://code.visualstudio.com/docs/remote/ssh) over an SSH-connection. To directly edit code  this is a good choice.
+
+When wanting to copy/delete files from shake use [WinSCP](https://winscp.net/eng/download.php).
 
 # Commands
 - watch script output: `tail -f ~/script/debug_log.txt`
