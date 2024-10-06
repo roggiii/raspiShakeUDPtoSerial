@@ -22,7 +22,7 @@ When wanting to copy/delete files from shake use [WinSCP](https://winscp.net/eng
    `sudo rm /var/run/crond.reboot`
    `sudo service cron restart`
 
-# Descrition from the files in this project
+# File descriptions
 - **server.py** main programm loop
 - **client.py** provides dummy shake data to configurable UDP port for testing purposes
 - **config.ino** config file for the serial and udp communication parameters
