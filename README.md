@@ -8,7 +8,7 @@ Helpful when the shake needs to be operated in remote areas where no internet co
 - https://community.raspberryshake.org/c/tech-support/34
 
 ## Establish remote connection:
-It is possible to edit the code directly on the shake via [VS-Code](https://code.visualstudio.com/docs/remote/ssh) over an SSH-connection. To directly edit code  this is a good choice.
+It is possible to edit the code remotly over ssh on the shake via [VS-Code](https://code.visualstudio.com/docs/remote/ssh).
 
 When wanting to copy/delete files from shake use [WinSCP](https://winscp.net/eng/download.php).
 
