@@ -6,6 +6,10 @@ Helpful when the shake needs to be operated in remote areas where no internet co
 - https://manual.raspberryshake.org/udp.html
 - https://community.raspberryshake.org/c/tech-support/34
 
+# Establish remote connection
+To directly edit code [VS-Code](https://code.visualstudio.com/docs/remote/ssh) is a good choice.
+When wanting to copy/delete files from shake [WinSCP](https://winscp.net/eng/download.php) works.
+
 # Commands
 - watch script output: `tail -f ~/script/debug_log.txt`
 - list all processes containing "python": `ps -ef | grep python`
