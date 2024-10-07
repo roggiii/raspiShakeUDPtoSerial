@@ -2,12 +2,53 @@
 import configparser
 import os.path
 import sys
+import serial
+import time
 
 from myLogger import logger
 
 # when the script is executed automatically on boot, linux needs an absolute
 # path to the config file
 CONFIG_FILE_PATH = os.path.dirname(__file__)+'\config.ini'
+
+class serialCommsManager:
+     
+    serial_baudrate = 0
+    serial_port = ""
+    serial_coms_enabled = False
+    serialObject = 0
+
+    def __init__(self,serial_baudrate,serial_port,serial_coms_enabled):
+         self.serial_baudrate = serial_baudrate
+         self.serial_port = serial_port
+         self.serial_coms_enabled = serial_coms_enabled
+         
+    def reconnectSerial(self):
+        try:
+            logger.info("Tryping to reconnect to serial port "+self.serial_port + " ...")
+            self.serialObject = serial.Serial(self.serial_port, self.serial_baudrate)
+        except:
+            logger.warning("Serial port could not be connected!")
+            time.sleep(1)
+            self.reconnectSerial()
+
+    def connectSerial(self):
+        if self.serial_coms_enabled == True:
+            try:
+                logger.info("Serial port enabled, trying to connect ...")
+                self.serialObject = serial.Serial(self.serial_port, self.serial_baudrate)
+            except:
+                logger.warning("Serial port could not be connected!")
+                self.reconnectSerial()
+
+    def sendSerial(self,message):
+        if self.serial_coms_enabled == True:
+            try:
+                self.serialObject.write(message.encode())
+            except:
+                logger.warning("Serial port could not be connected!")
+                self.reconnectSerial()
+
 
 class runtimesystem:
     os_name = ""

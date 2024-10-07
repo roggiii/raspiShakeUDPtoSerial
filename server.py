@@ -8,6 +8,7 @@ import sys
 
 
 from helper import runtimesystem
+from helper import serialCommsManager
 from myLogger import logger
 
 #ToDo's
@@ -25,46 +26,7 @@ from myLogger import logger
 
 MITTELUNGSZEIT = 2
 
-# Starting point of script
-logger.info("#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#")
-logger.info("Starting script ...")
-
-system_info = runtimesystem()
-system_info.readFromConfigFile()
-system_info.print_info()
-
-
-# UDP-Connection
-logger.info("trying to start upd-connection")
-
-sock = s.socket(s.AF_INET, s.SOCK_DGRAM)
-sock.setsockopt(s.SOL_SOCKET, s.SO_REUSEADDR, 1)
-
-# Funktion kümmert sich um die Ausgabe in:
-# - Debugfile
-# - Terminal
-# - Seriellen Port
-def print_HDF_output(timestamp,final_RSAM_value):
-    message = 'HDF' + ';' + str(timestamp) + ';' + str(int(final_RSAM_value)) + '\n'
-    logger.info(message)                        # in debug file Werte reinschreiben
-
-    if system_info.serial_coms_enabled:
-        try:
-            serial_port.write(message.encode())
-        except:
-            logger.warning("Serial Port not availible")
-
-
-def print_EHZ_output(timestamp,final_RSAM_value):
-    message = 'EHZ' + ';' + str(timestamp) + ';' + str(int(final_RSAM_value)) + '\n'
-    logger.info(message)
-
-    if system_info.serial_coms_enabled:
-        try:
-            serial_port.write(message.encode())
-        except:
-            logger.warning("Serial Port not availible")
-
+# Function definitions
 
 # checks if network port is ready
 # nececcary because on the raspy it takes a few seconds to initialise the socket,
@@ -75,10 +37,6 @@ def UDP_portUsable():
        return True
     except:
        return False
-    
-while UDP_portUsable() == False:
-    logger.warning("Networkcard not initialised, waiting ...")
-    time.sleep(5)
 
 # checks if given serial port is availible
 def portIsUsable():
@@ -87,16 +45,36 @@ def portIsUsable():
        return True
     except:
        return False
+    
+# Funktion kümmert sich um die Ausgabe in:
+# - Debugfile
+# - Terminal
+# - Seriellen Port
+def outputCalculatedValuesToSerial(timestamp,final_RSAM_value,type):
+    message = type + ';' + str(timestamp) + ';' + str(int(final_RSAM_value)) + '\n'
+    logger.info(message)
+    manager.sendSerial(message)
 
-# checks if serial communications should be enabled for given os
-# opens port for serial communication accordingly
-if system_info.serial_coms_enabled:
-    logger.info("Trying to connect to serial port")
-    while portIsUsable() == False:
-        #print("Serial Port not availible, retrying ...")
-        logger.warning("Serial Port not availible, retrying ...")
-        time.sleep(1)
-    serial_port = serial.Serial(system_info.serial_port, system_info.serial_baudrate)
+# Starting point of script
+logger.info("#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#")
+logger.info("Starting script ...")
+
+system_info = runtimesystem()
+system_info.readFromConfigFile()
+system_info.print_info()
+
+manager = serialCommsManager(system_info.serial_baudrate, system_info.serial_port, system_info.serial_coms_enabled)
+manager.connectSerial()
+
+# UDP-Connection
+logger.info("trying to start upd-connection")
+
+sock = s.socket(s.AF_INET, s.SOCK_DGRAM)
+sock.setsockopt(s.SOL_SOCKET, s.SO_REUSEADDR, 1)
+
+while UDP_portUsable() == False:
+    logger.warning("Networkcard not initialised, waiting ...")
+    time.sleep(5)
 
 
 stream = []         # array holding all the single values from the data stream from the rapberry pi in an array
@@ -107,7 +85,7 @@ message = ""        # serial message to be sent out
 ehz_array = []      # calculate mean value of a few data packets
 hdf_array = []      # calculate mean value of a few data packets
 
-now_EHZ = 0             # Startzeitpunkt der Mittelung
+now_EHZ = 0         # Startzeitpunkt der Mittelung
 now_HDF = 0
 
 timestamp_EHZ = 0
@@ -116,7 +94,7 @@ timestamp_HDF = 0
 logger.warning("waiting for server to respond ...")
 
 #################################### FOR DEBUG
-sys.exit()
+#sys.exit()
 
 while 1:             
     data, addr = sock.recvfrom(1024)                        # warte bis Daten vom UDP-Port bereitgestellt werden
@@ -140,7 +118,7 @@ while 1:
         if float(timestamp_EHZ) > now_EHZ + MITTELUNGSZEIT:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung
             
             final_ehz_rsam_value = np.mean(ehz_array)        # alle gesammelten Messwerte in eingestellter Zeitspanne mitteln
-            print_EHZ_output(now_EHZ,final_ehz_rsam_value)
+            outputCalculatedValuesToSerial(now_EHZ,final_ehz_rsam_value,'EHZ')
 
             now_EHZ = float(timestamp_EHZ)
             ehz_array = []                                   # gespeicherte Messwerte löschen für nächsten Durchlauf
@@ -167,7 +145,7 @@ while 1:
         if float(timestamp_HDF) > now_HDF + MITTELUNGSZEIT:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung
             
             final_hdf_rsam_value = np.mean(hdf_array)        # alle gesammelten Messwerte in eingestellter Zeitspanne mitteln
-            print_HDF_output(now_HDF,final_hdf_rsam_value)
+            outputCalculatedValuesToSerial(now_HDF,final_hdf_rsam_value,'HDF')
 
             now_HDF = float(timestamp_HDF)
             hdf_array = []                                   # gespeicherte Messwerte löschen für nächsten Durchlauf
