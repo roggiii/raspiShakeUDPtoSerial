@@ -1,5 +1,5 @@
 # Raspberryshake UDP-stream to serial connection
-Takes the UDP datastream from the raspberry shake client and outputs it to an [usb-to-serial-converter](https://www.az-delivery.de/en/products/ftdi-adapter-ft232rl)
+Takes the UDP datastream from the raspberry shake client, calculated RSAM-values and outputs it to an [usb-to-serial-converter](https://www.az-delivery.de/en/products/ftdi-adapter-ft232rl).
 Helpful when the shake needs to be operated in remote areas where no internet connection is availible but the data should be analysed for threats.
 
 # Useful stuff:
