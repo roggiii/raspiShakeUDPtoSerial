@@ -7,10 +7,6 @@ import time
 
 from myLogger import logger
 
-# when the script is executed automatically on boot, linux needs an absolute
-# path to the config file
-CONFIG_FILE_PATH = os.path.dirname(__file__)+'\config.ini'
-
 class serialCommsManager:
      
     serial_baudrate = 0
@@ -60,8 +56,16 @@ class configFileManager:
     file_logger_debug_level = ""
     terminal_logger_debug_level = ""
 
+    CONFIG_FILE_PATH = ""
+
+    def __init__(self,config_file_name):
+        # when the script is executed automatically on boot, linux needs an absolute
+        # path to the config file
+        self.CONFIG_FILE_PATH = os.path.dirname(__file__)+"/"+config_file_name
+        
+
     # creates new config file with default values
-    def __create_config():
+    def __create_config(self):
         logger.info("Configfile does not exist, creating file in working directory ...")
 
         config = configparser.ConfigParser()
@@ -85,7 +89,7 @@ class configFileManager:
 
         # Write the configuration to a file
         try:
-            with open(CONFIG_FILE_PATH, 'w') as configfile:
+            with open(self.CONFIG_FILE_PATH, 'w') as configfile:
                 config.write(configfile)
         except:
             logger.info("Configfile could not be created!")
@@ -94,7 +98,7 @@ class configFileManager:
             logger.info("Terminating script ....")
             sys.exit()
 
-        logger.info('Configfile "'+ CONFIG_FILE_PATH +'" has been created')
+        logger.info('Configfile "'+ self.CONFIG_FILE_PATH +'" has been created')
         logger.info("Script needs to be restarted bevore new settings are activated")
         logger.info("Terminating script ... goodbye!")
         sys.exit()
@@ -102,7 +106,7 @@ class configFileManager:
     # writes contents of the config file to object
     def __get_settings(self):
         config = configparser.ConfigParser()
-        config.read(CONFIG_FILE_PATH)
+        config.read(self.CONFIG_FILE_PATH)
 
         self.os_name = config.get('General','os_name')
         self.serial_baudrate = config.getint('Serial_Communication','baudrate')
@@ -133,11 +137,11 @@ class configFileManager:
 
     # checks if config file exists and runs subroutines to either create new config file or to populate object
     def readFromConfigFile(self):
-        logger.info("looking for config.ini file in "+CONFIG_FILE_PATH)
-        if not os.path.isfile(CONFIG_FILE_PATH):
+        logger.info("looking for config.ini file in "+self.CONFIG_FILE_PATH)
+        if not os.path.isfile(self.CONFIG_FILE_PATH):
             configFileManager.__create_config()
 
-        if os.path.isfile(CONFIG_FILE_PATH):
+        if os.path.isfile(self.CONFIG_FILE_PATH):
             logger.info("Configfile has been found, reading settings ...")
             try:
                 configFileManager.__get_settings(self)

@@ -59,7 +59,7 @@ def outputCalculatedValuesToSerial(timestamp,final_RSAM_value,type):
 logger.info("#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#")
 logger.info("Starting script ...")
 
-system_info = configFileManager()
+system_info = configFileManager("config.ini")
 system_info.readFromConfigFile()
 system_info.print_info()
 
