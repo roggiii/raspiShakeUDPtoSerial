@@ -7,7 +7,7 @@ import time
 import sys
 
 
-from helper import runtimesystem
+from helper import configFileManager
 from helper import serialCommsManager
 from myLogger import logger
 
@@ -53,18 +53,18 @@ def portIsUsable():
 def outputCalculatedValuesToSerial(timestamp,final_RSAM_value,type):
     message = type + ';' + str(timestamp) + ';' + str(int(final_RSAM_value)) + '\n'
     logger.info(message)
-    manager.sendSerial(message)
+    serialManager.sendSerial(message)
 
 # Starting point of script
 logger.info("#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#------#")
 logger.info("Starting script ...")
 
-system_info = runtimesystem()
+system_info = configFileManager()
 system_info.readFromConfigFile()
 system_info.print_info()
 
-manager = serialCommsManager(system_info.serial_baudrate, system_info.serial_port, system_info.serial_coms_enabled)
-manager.connectSerial()
+serialManager = serialCommsManager(system_info.serial_baudrate, system_info.serial_port, system_info.serial_coms_enabled)
+serialManager.connectSerial()
 
 # UDP-Connection
 logger.info("trying to start upd-connection")

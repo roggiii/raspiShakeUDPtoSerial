@@ -50,7 +50,7 @@ class serialCommsManager:
                 self.reconnectSerial()
 
 
-class runtimesystem:
+class configFileManager:
     os_name = ""
     serial_baudrate = 0
     serial_port = ""
@@ -135,12 +135,12 @@ class runtimesystem:
     def readFromConfigFile(self):
         logger.info("looking for config.ini file in "+CONFIG_FILE_PATH)
         if not os.path.isfile(CONFIG_FILE_PATH):
-            runtimesystem.__create_config()
+            configFileManager.__create_config()
 
         if os.path.isfile(CONFIG_FILE_PATH):
             logger.info("Configfile has been found, reading settings ...")
             try:
-                runtimesystem.__get_settings(self)
+                configFileManager.__get_settings(self)
             except:
                 logger.info("Failed to read configfile, delete file and restart script!")
                 logger.info("Terminating script ... goodbye!")
