@@ -26,22 +26,12 @@ from myLogger import logger
 
 MITTELUNGSZEIT = 2
 
-# Function definitions
-
 # checks if network port is ready
 # nececcary because on the raspy it takes a few seconds to initialise the socket,
 # will fail otherwise and script would be terminated with automatic start on boot
 def UDP_portUsable():
     try:
        sock.bind((system_info.udp_ip_adress, system_info.udp_port_no))
-       return True
-    except:
-       return False
-
-# checks if given serial port is availible
-def portIsUsable():
-    try:
-       ser = serial.Serial(system_info.serial_port, system_info.serial_baudrate)
        return True
     except:
        return False
