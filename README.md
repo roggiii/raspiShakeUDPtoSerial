@@ -13,7 +13,7 @@ It is possible to edit the code remotly over ssh on the shake via [VS-Code](http
 When wanting to copy/delete files from shake use [WinSCP](https://winscp.net/eng/download.php).
 
 # Commands
-- watch script output: `tail -f ~/script/debug_log.txt`
+- watch script output: `tail -f ~/script/debug_file.txt`
 - list all processes containing "python": `ps -ef | grep python`
 - kill running script: `pkill -9 -f server.py`
 - start script: `~/script/./server.py &`
