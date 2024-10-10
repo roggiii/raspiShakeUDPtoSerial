@@ -15,7 +15,7 @@ from myLogger import logger
 # - figure out why raspi shake sends nothing to localhost ip
 # - write a funktion to calculate the rasam value and put
 # -  all the neccesary variables in a class
-# - serial port should retry to connect when disconnect happend
+# - logger needs to be made configurable from the file
 
 # pi only sends out the udp data to one of the physikal connection points ...
 # not possible to pipe data to localhost 127.0.0.1 for some reason
