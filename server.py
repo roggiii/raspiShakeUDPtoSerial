@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import socket as s
 import numpy as np 
@@ -102,7 +102,6 @@ while 1:
         stream = np.abs(stream)
         rasam = np.mean(stream)
 
-
         ehz_array = np.append(ehz_array,rasam)
 
         if float(timestamp_EHZ) > now_EHZ + MITTELUNGSZEIT:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung
@@ -129,7 +128,7 @@ while 1:
         stream = np.subtract(offset, stream)
         stream = np.abs(stream)
         rasam = np.mean(stream)
-
+    
         hdf_array = np.append(hdf_array,rasam)
 
         if float(timestamp_HDF) > now_HDF + MITTELUNGSZEIT:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung
