@@ -42,7 +42,6 @@ Description of the steps to take when to operate shake offline and analyse the d
    - `pip3 install --upgrade pip --timeout 100`
    - `pip3 install cmake --timeout 100 --no-cache-dir`
    - `pip3 install numpy --timeout 100 --no-cache-dir`
-   - `pip3 uninstall serial`
    - `pip3 install pyserial`
   5. Start script on reboot:
      - edit cronjob with the following command:
