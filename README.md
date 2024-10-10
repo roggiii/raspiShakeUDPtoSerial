@@ -4,6 +4,7 @@ Helpful when the shake needs to be operated in remote areas where no internet co
 
 # Useful stuff:
 ## Links:
+- [Flash RaspishakeOS on SD-Card](https://gitlab.com/raspberryShake-public/raspshake-sd-img/-/blob/main/raspishake-microSD-card-software-Instructions.txt)
 - https://manual.raspberryshake.org/udp.html
 - https://community.raspberryshake.org/c/tech-support/34
 
