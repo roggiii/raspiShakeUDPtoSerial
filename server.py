@@ -9,6 +9,7 @@ import sys
 
 from helper import configFileManager
 from helper import serialCommsManager
+from helper import calcRSAMvalue_withoutNumpy
 from myLogger import logger
 
 #ToDo's
@@ -94,14 +95,7 @@ while 1:
         for einzel_string in s[2:]:                         # jedenen einzelnen string ab dem 2. Element in einen Integer umwandeln
             stream = np.append(stream, int(einzel_string))
 
-        # code zum generieren des RSAM:
-        # calculate offet and substract it from all the values in the array
-        # take the absolut values from this and then build the mean again
-        offset = np.mean(stream)
-        stream = np.subtract(offset, stream)
-        stream = np.abs(stream)
-        rasam = np.mean(stream)
-
+        rasam = calcRSAMvalue_withoutNumpy(stream)
         ehz_array = np.append(ehz_array,rasam)
 
         if float(timestamp_EHZ) > now_EHZ + MITTELUNGSZEIT:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung
@@ -121,14 +115,7 @@ while 1:
         for einzel_string in s[2:]:                         # jedenen einzelnen string ab dem 2. Element in einen Integer umwandeln
             stream = np.append(stream, int(einzel_string))
 
-        # code zum generieren des RSAM:
-        # calculate offet and substract it from all the values in the array
-        # take the absolut values from this and then build the mean again
-        offset = np.mean(stream)
-        stream = np.subtract(offset, stream)
-        stream = np.abs(stream)
-        rasam = np.mean(stream)
-    
+        rasam = calcRSAMvalue_withoutNumpy(stream)    
         hdf_array = np.append(hdf_array,rasam)
 
         if float(timestamp_HDF) > now_HDF + MITTELUNGSZEIT:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung

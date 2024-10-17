@@ -7,6 +7,40 @@ import time
 
 from myLogger import logger
 
+def calcMean(x):
+    """takes integer array as input and calculated mean value"""
+    i = 0
+    for item in x:
+        i = i+item
+
+    mean = i / len(x)
+    return(mean)
+
+def calcSubtraction(x,offset):
+    """takes ingeger array as input and subtracts a value from every element"""
+    x = list(x)
+    for item in range(len(x)):
+        x[item] = x[item] - offset
+    return x
+
+def calcAbs(x):
+    for item in range(len(x)):
+        x[item] = abs(x[item])
+    return x
+
+# RSAM calculation:
+# calculate offet and substract it from all the values in the array
+# take the absolut values from this and then build the mean again
+def calcRSAMvalue_withoutNumpy(measurement_values):
+    if len(measurement_values) == 0:
+        return 0
+    offset = calcMean(measurement_values)
+    foo = calcSubtraction(measurement_values, offset)
+    foo = calcAbs(foo)
+    rsam = calcMean(foo)
+    return rsam
+
+
 class serialCommsManager:
      
     serial_baudrate = 0
