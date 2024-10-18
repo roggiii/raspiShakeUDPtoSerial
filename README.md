@@ -40,8 +40,6 @@ Description of the steps to take when to operate shake offline and analyse the d
    --timeout 100 is neccecary when there is a bad internet connection
    - `sudo apt install python3-pip`
    - `pip3 install --upgrade pip --timeout 100`
-   - `pip3 install cmake --timeout 100 --no-cache-dir`
-   - `pip3 install numpy --timeout 100 --no-cache-dir`
    - `pip3 install pyserial`
   5. Start script on reboot:
      - edit cronjob with the following command:
