@@ -30,27 +30,36 @@ When wanting to copy/delete files from shake use [WinSCP](https://winscp.net/eng
 
 # Setup
 Description of the steps to take when to operate shake offline and analyse the data locally.
+
+## Set offline mode
+Connect via ssh and enter the following command: `rsh-stand-alone ON` and confirm with `YES`
+
+## Datacast and static IP
+1. Goto http://rs.local/
+2. Set Datacast-IP: `172.17.0.2` and Portnumber: `8888` 
+
 ## Packages
 1. Connect Pi to the internet.
-   - Goto http://rs.local/ if you want to setup with wifi
+   - Goto http://rs.local/ if you want to setup with wifi or any other network connection to the internet
 3. update:
    - `sudo apt-get --allow-releaseinfo-change update`
-   - `sudo apt-get update && apt-get upgrade`
+   - `sudo apt-get update && sudo apt-get upgrade`
 4. Install Packages:
    --timeout 100 is neccecary when there is a bad internet connection
    - `sudo apt install python3-pip`
    - `pip3 install --upgrade pip --timeout 100`
    - `pip3 install pyserial`
-  5. Start script on reboot:
-     - edit cronjob with the following command:
-       `EDITOR=nano crontab -e`
-     - paste and save this line into cronfile:
-       `@reboot /usr/bin/python3 /home/myshake/script/./server.py`
-  6. Set file permissions:
+5. Copy Script:
+   - create folder: `mkdir ~/script`
+   - copy the all the files in this repo into this folder
+6. Set file permissions:
      - `chmod +x ~/script/server.py`
-## Datacast and static IP
-1. Goto http://rs.local/
-2. Set Datacast and static IP to: ??
+7. Start script on reboot:
+   - edit cronjob with the following command:
+     `EDITOR=nano crontab -e`
+   - paste and save this line into cronfile:
+     `@reboot /usr/bin/python3 /home/myshake/script/./server.py`
+
 
 ## Setup serial port
 Serial port needs to be configured so that the COM-port-number wont change on reboot. This is to be done with a u-dev-rule. [Source](https://unix.stackexchange.com/questions/66901/how-to-bind-usb-device-under-a-static-name)
@@ -67,9 +76,6 @@ Serial port needs to be configured so that the COM-port-number wont change on re
 5. Verify rule change: `ls -l /dev/my_serial`
    - shows what tty number the syslink went to
 6. Test rule change: `udevadm test -a -p  $(udevadm info -q path -n /dev/my_serial)`
-
-## Set offline mode
-Connect via ssh and enter the following command: `rsh-stand-alone ON` and confirm with `YES`
 
 ## Configure Shake to write logs to usb-drive
 Follow instructions on [Raspberryshake.org](https://manual.raspberryshake.org/usbsds.html#usbsds)
