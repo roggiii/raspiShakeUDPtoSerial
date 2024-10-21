@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import socket as s
-import numpy as np 
 import serial
 import time
 import sys
@@ -10,6 +9,7 @@ import sys
 from helper import configFileManager
 from helper import serialCommsManager
 from helper import calcRSAMvalue_withoutNumpy
+from helper import calcMean
 from myLogger import logger
 
 #ToDo's
@@ -24,8 +24,6 @@ from myLogger import logger
 # code can run on windows/linux for testing purposes
 # configurable for testing purposes: for example to disable serial communication to
 # avoid errors while on an testing rig
-
-MITTELUNGSZEIT = 2
 
 # checks if network port is ready
 # nececcary because on the raspy it takes a few seconds to initialise the socket,
@@ -93,14 +91,14 @@ while 1:
     if 'EHZ' in s[0]:                                       # EHZ: 100 sample per second (E), high gain (H), single-component seismograph (Z) with 3 orthogonal channels of acceleration: EN[Z,N,E].
         timestamp_EHZ = s[1]
         for einzel_string in s[2:]:                         # jedenen einzelnen string ab dem 2. Element in einen Integer umwandeln
-            stream = np.append(stream, int(einzel_string))
+            stream.append(int(einzel_string))
 
         rasam = calcRSAMvalue_withoutNumpy(stream)
-        ehz_array = np.append(ehz_array,rasam)
+        ehz_array.append(rasam)
 
-        if float(timestamp_EHZ) > now_EHZ + MITTELUNGSZEIT:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung
+        if float(timestamp_EHZ) > now_EHZ + system_info.communication_rate:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung
             
-            final_ehz_rsam_value = np.mean(ehz_array)        # alle gesammelten Messwerte in eingestellter Zeitspanne mitteln
+            final_ehz_rsam_value = calcMean(ehz_array)        # alle gesammelten Messwerte in eingestellter Zeitspanne mitteln
             outputCalculatedValuesToSerial(now_EHZ,final_ehz_rsam_value,'EHZ')
 
             now_EHZ = float(timestamp_EHZ)
@@ -113,14 +111,14 @@ while 1:
         timestamp_HDF = s[1]
 
         for einzel_string in s[2:]:                         # jedenen einzelnen string ab dem 2. Element in einen Integer umwandeln
-            stream = np.append(stream, int(einzel_string))
+            stream.append(int(einzel_string))
 
         rasam = calcRSAMvalue_withoutNumpy(stream)    
-        hdf_array = np.append(hdf_array,rasam)
+        hdf_array.append(rasam)
 
-        if float(timestamp_HDF) > now_HDF + MITTELUNGSZEIT:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung
+        if float(timestamp_HDF) > now_HDF + system_info.communication_rate:          # Wenn x Sekunden vergangen sind setze neuen Startzeitpunkt für Mittelung
             
-            final_hdf_rsam_value = np.mean(hdf_array)        # alle gesammelten Messwerte in eingestellter Zeitspanne mitteln
+            final_hdf_rsam_value = calcMean(hdf_array)        # alle gesammelten Messwerte in eingestellter Zeitspanne mitteln
             outputCalculatedValuesToSerial(now_HDF,final_hdf_rsam_value,'HDF')
 
             now_HDF = float(timestamp_HDF)

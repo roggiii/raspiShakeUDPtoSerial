@@ -6,7 +6,7 @@ import os.path
 
 # when the script is executed automatically on boot, linux needs an absolute
 # path to the log file
-LOG_FILE_PATH = os.path.dirname(__file__)+'\debug_file.txt'
+LOG_FILE_PATH = os.path.dirname(__file__)+'/debug_file.txt'
 
 # logger configuration
 # saves file "debug_log.txt" in the same folder as the script
@@ -31,7 +31,7 @@ file_handler.setFormatter(formatter)
 
 # Create a stream handler to print logs to the console
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)  # You can set the desired log level for console output
+console_handler.setLevel(logging.CRITICAL)  # You can set the desired log level for console output
 console_handler.setFormatter(formatter)
 
 # Add the handlers to the logger

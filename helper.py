@@ -82,13 +82,12 @@ class serialCommsManager:
 
 class configFileManager:
     os_name = ""
+    communication_rate = 0
     serial_baudrate = 0
     serial_port = ""
     udp_ip_adress = ""
     udp_port_no = 0
     serial_coms_enabled = False
-    file_logger_debug_level = ""
-    terminal_logger_debug_level = ""
 
     CONFIG_FILE_PATH = ""
 
@@ -106,7 +105,8 @@ class configFileManager:
 
         # Add sections and key-value pairs
         config['General'] = {
-            'os_name': 'Test'}
+            'os_name': 'Test',
+            'communication_rate': 2}
 
         config['Serial_Communication'] = {
             'baudrate': '9600',
@@ -116,10 +116,6 @@ class configFileManager:
         config['UDP_Communication'] = {
             'ip_adress': "127.0.0.1",
             'port_numnber': 8888}
-        
-        config['Logging'] = {
-            'file_logger_debug_level': 'info',
-            'terminal_logger_debug_level': 'info'}
 
         # Write the configuration to a file
         try:
@@ -143,6 +139,7 @@ class configFileManager:
         config.read(self.CONFIG_FILE_PATH)
 
         self.os_name = config.get('General','os_name')
+        self.communication_rate = config.getint('General','communication_rate')
         self.serial_baudrate = config.getint('Serial_Communication','baudrate')
         self.serial_port = config.get('Serial_Communication','port')
         self.serial_coms_enabled = config.getboolean('Serial_Communication','enabled')
@@ -150,13 +147,12 @@ class configFileManager:
         self.udp_ip_adress = config.get('UDP_Communication', 'ip_adress')
         self.udp_port_no = config.getint('UDP_Communication', 'port_numnber')
 
-        self.file_logger_debug_level = config.get('Logging', 'file_logger_debug_level')
-        self.terminal_logger_debug_level = config.get('Logging', 'terminal_logger_debug_level')
 
     # logger.infos all the availible public variable data for the communication
     def print_info(self):
         logger.info("------------ Settings ------------")
         logger.info("# Operatingsystem: "+self.os_name)
+        logger.info("- Communication rate: "+ str(self.communication_rate))
         logger.info("# Serial Communication:")
         logger.info("- Baudrate: "+str(self.serial_baudrate))
         logger.info("- Serialport: "+self.serial_port)
@@ -164,16 +160,13 @@ class configFileManager:
         logger.info("# UDP-Communication:")
         logger.info("- IP-Adress: "+self.udp_ip_adress)
         logger.info("- Portnumber: "+str(self.udp_port_no))
-        logger.info("# Logging")
-        logger.info("- file logger level: "+ self.file_logger_debug_level)
-        logger.info("- terminal logger level: "+ self.terminal_logger_debug_level)
         logger.info("------------------------------------")
 
     # checks if config file exists and runs subroutines to either create new config file or to populate object
     def readFromConfigFile(self):
         logger.info("looking for config.ini file in "+self.CONFIG_FILE_PATH)
         if not os.path.isfile(self.CONFIG_FILE_PATH):
-            configFileManager.__create_config()
+            configFileManager.__create_config(self)
 
         if os.path.isfile(self.CONFIG_FILE_PATH):
             logger.info("Configfile has been found, reading settings ...")
