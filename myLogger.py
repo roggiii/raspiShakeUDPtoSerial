@@ -31,7 +31,7 @@ file_handler.setFormatter(formatter)
 
 # Create a stream handler to print logs to the console
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.CRITICAL)  # You can set the desired log level for console output
+console_handler.setLevel(logging.DEBUG)  # You can set the desired log level for console output
 console_handler.setFormatter(formatter)
 
 # Add the handlers to the logger
