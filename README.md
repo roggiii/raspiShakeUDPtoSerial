@@ -28,6 +28,9 @@ When wanting to copy/delete files from shake use [WinSCP](https://winscp.net/eng
 - **client.py** provides dummy shake data to configurable UDP port for testing purposes
 - **config.ino** config file for the serial and udp communication parameters
 
+# Download wave form data
+connect to shake via ftp and go to `/opt/data/archive/YEAR/NETWORK/STATION/CHANNEL/<DAILY MINISEED FILES>`. These can be opened with [SWARM](https://manual.raspberryshake.org/swarm.html).
+
 # Setup
 Description of the steps to take when to operate shake offline and analyse the data locally.
 
