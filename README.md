@@ -28,8 +28,9 @@ When wanting to copy/delete files from shake use [WinSCP](https://winscp.net/eng
 - **client.py** provides dummy shake data to configurable UDP port for testing purposes
 - **config.ino** config file for the serial and udp communication parameters
 
-# Download wave form data
-connect to shake via ftp and go to `/opt/data/archive/YEAR/NETWORK/STATION/CHANNEL/<DAILY MINISEED FILES>`. These can be opened with [SWARM](https://manual.raspberryshake.org/swarm.html).
+# Download wave form data and display data
+- connect to shake via ftp and go to `/opt/data/archive/YEAR/NETWORK/STATION/CHANNEL/<DAILY MINISEED FILES>`. These can be opened with [SWARM](https://manual.raspberryshake.org/swarm.html)
+- download and install [SWARM](https://manual.raspberryshake.org/swarm.html)
 
 # Setup
 Description of the steps to take when to operate shake offline and analyse the data locally.
@@ -81,8 +82,8 @@ Serial port needs to be configured so that the COM-port-number wont change on re
 6. Test rule change: `udevadm test -a -p  $(udevadm info -q path -n /dev/my_serial)`
 
 ## Configure Shake to write logs to usb-drive
-Follow instructions on [Raspberryshake.org](https://manual.raspberryshake.org/usbsds.html#usbsds)
-
+- Follow instructions on [Raspberryshake.org](https://manual.raspberryshake.org/usbsds.html#usbsds)
+- Goto http://rs.local/ and goto `settings` -> `data` and set `Waveform Data Saving` to `360`. (this is the maximum allowed value)
 
 
 
