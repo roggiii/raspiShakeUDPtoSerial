@@ -29,8 +29,8 @@ When wanting to copy/delete files from shake use [WinSCP](https://winscp.net/eng
 - **config.ino** config file for the serial and udp communication parameters
 
 # Download wave form data and display data
-- connect to shake via ftp and go to `/opt/data/archive/YEAR/NETWORK/STATION/CHANNEL/<DAILY MINISEED FILES>`. These can be opened with [SWARM](https://manual.raspberryshake.org/swarm.html)
-- download and install [SWARM](https://manual.raspberryshake.org/swarm.html)
+- connect to shake via ftp and go to `/opt/data/archive/YEAR/NETWORK/STATION/CHANNEL/<DAILY MINISEED FILES>`. These can be opened with [SWARM](https://volcanoes.usgs.gov/software/swarm/download.shtml)
+- [download](https://volcanoes.usgs.gov/software/swarm/download.shtml) and [install](https://manual.raspberryshake.org/swarm.html) SWARM
 
 # Setup
 Description of the steps to take when to operate shake offline and analyse the data locally.
