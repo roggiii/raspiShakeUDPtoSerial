@@ -17,7 +17,7 @@ When wanting to copy/delete files from shake use [WinSCP](https://winscp.net/eng
 - watch script output: `tail -f ~/script/debug_file.txt`
 - list all processes containing "python": `ps -ef | grep python`
 - kill running script: `pkill -9 -f server.py`
-- start script: `~/script/./server.py &`
+- start script: `python3 ~/script/./server.py &`
 - edit script: `nano ~/script/server.py`
 - test @reboot cronjob without having to actually restart the pi:
    `sudo rm /var/run/crond.reboot`
